@@ -116,7 +116,7 @@ var Resources = (function () {
 /// <reference path="Resources.ts" />
 var Engine = (function () {
     /**
-     *
+     * The Game Engine
      */
     function Engine(global) {
         var e = this;
@@ -168,6 +168,47 @@ var Engine = (function () {
          */
         this.win.requestAnimationFrame(this.main.bind(this));
     };
+    Engine.prototype.bindKeys = function () {
+        var self = this;
+        // This listens for key presses and sends the keys to your
+        // Player.handleInput() method. You don't need to modify this.
+        this.doc.addEventListener('keyup', function (event) {
+            var allowedKeys = {
+                37: 'left',
+                38: 'up',
+                39: 'right',
+                40: 'down',
+                32: 'space'
+            };
+            self.handleInput(allowedKeys[event.keyCode]);
+        });
+    };
+    Engine.prototype.handleInput = function (input) {
+        switch (input) {
+            case 'up':
+                console.log('pressed up!');
+                this.player.up();
+                break;
+            case 'down':
+                console.log('pressed down!');
+                this.player.down();
+                break;
+            case 'left':
+                console.log('pressed left!');
+                this.player.left();
+                break;
+            case 'right':
+                console.log('pressed right!');
+                this.player.right();
+                break;
+            case 'space':
+                console.log('pressed space!');
+                this.reset();
+                break;
+            default:
+                break;
+        }
+    };
     /* This function does some initial setup that should only occur once,
      * particularly setting the lastTime variable that is required for the
      * game loop.
@@ -178,6 +219,7 @@ var Engine = (function () {
         this.player = new Player(this);
         this.allEnemies = this.generateEnemies(4);
         this.main();
+        this.bindKeys();
     };
     Engine.prototype.generateEnemies = function (numEnemies) {
         var allEnemies = [];
@@ -340,37 +382,18 @@ var Player = (function (_super) {
         this.engine.ctx.drawImage(this.engine.resources.get(this.spriteImage), this.x, this.y);
     };
     ;
-    Player.prototype.handleInput = function (input) {
+    Player.prototype.up = function () {
+    };
+    Player.prototype.down = function () {
+    };
+    Player.prototype.left = function () {
+    };
+    Player.prototype.right = function () {
     };
     return Player;
 }(Sprite));
-var ControlKeys;
-(function (ControlKeys) {
-    ControlKeys[ControlKeys["left"] = 37] = "left";
-    ControlKeys[ControlKeys["up"] = 38] = "up";
-    ControlKeys[ControlKeys["right"] = 39] = "right";
-    ControlKeys[ControlKeys["down"] = 40] = "down";
-})(ControlKeys || (ControlKeys = {}));
 /// <reference path="./Engine.ts" />
 /// <reference path="./Enemy.ts" />
 /// <reference path="./Player.ts" />
-/// <reference path="./Enums.ts" />
-// Now write your own player class
-// This class requires an update(), render() and
-// a handleInput() method.
-// Now instantiate your objects.
-// Place all enemy objects in an array called allEnemies
-// Place the player object in a variable called player
 var engine = new Engine(this);
-// This listens for key presses and sends the keys to your
-// Player.handleInput() method. You don't need to modify this.
-document.addEventListener('keyup', function (e) {
-    var allowedKeys = {
-        37: 'left',
-        38: 'up',
-        39: 'right',
-        40: 'down'
-    };
-    engine.player.handleInput(allowedKeys[e.keyCode]);
-});
 //# sourceMappingURL=app.js.map

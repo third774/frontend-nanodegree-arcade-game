@@ -10,18 +10,7 @@
  * the screen, it may look like just that image/character is moving or being
  * drawn but that is not the case. What's really happening is the entire "scene"
  * is being drawn over and over, presenting the illusion of animation.
- *
- * This engine is available globally via the Engine variable and it also makes
- * the canvas' context (ctx) object globally available to make writing app.js
- * a little simpler to work with.
  */
-
-declare var global: any;
-
-interface IEngineConfig {
-    allEnemies: Array<Enemy>;
-    player: Player;
-}
 
 class Engine {
     doc: Document;
@@ -34,7 +23,7 @@ class Engine {
     lastTime;
 
     /**
-     *
+     * The Game Engine
      */
     constructor(global: any) {
         var e = this;
@@ -94,7 +83,50 @@ class Engine {
         this.win.requestAnimationFrame(this.main.bind(this));
     }
 
-    /* This function does some initial setup that should only occur once,
+    private bindKeys() {
+        var self = this;
+        // This listens for key presses and sends the keys to your
+        // Player.handleInput() method. You don't need to modify this.
+        this.doc.addEventListener('keyup', function (event) {
+            var allowedKeys = {
+                37: 'left',
+                38: 'up',
+                39: 'right',
+                40: 'down',
+                32: 'space'
+            };
+            self.handleInput(allowedKeys[event.keyCode]);
+        });
+    }
+
+    private handleInput(input: string) {
+        switch (input) {
+            case 'up':
+                console.log('pressed up!');
+                this.player.up();
+                break;
+            case 'down':
+                console.log('pressed down!');
+                this.player.down();
+                break;
+            case 'left':
+                console.log('pressed left!');
+                this.player.left();
+                break;
+            case 'right':
+                console.log('pressed right!');
+                this.player.right();
+                break;
+            case 'space':
+                console.log('pressed space!');
+                this.reset();
+                break;
+            default:
+                break;
+        }
+    }
+    /**
+     * This function does some initial setup that should only occur once,
      * particularly setting the lastTime variable that is required for the
      * game loop.
      */
@@ -103,52 +135,55 @@ class Engine {
         this.lastTime = Date.now();
         this.player = new Player(this);
         this.allEnemies = this.generateEnemies(4);
-        this.main();        
+        this.main();
+        this.bindKeys();
     }
     
-    private generateEnemies(numEnemies: number) : Array<Enemy> {
+    /** Returns an Array of Enemies */
+    private generateEnemies(numEnemies: number): Array<Enemy> {
         let allEnemies: Array<Enemy> = [];
-        for(var i=0; i < numEnemies; i++) {
+        for (var i = 0; i < numEnemies; i++) {
             let enemy = new Enemy(this);
             allEnemies.push(enemy);
         }
         return allEnemies;
     }
-
-    /* This function is called by main (our game loop) and itself calls all
-     * of the functions which may need to update entity's data. Based on how
-     * you implement your collision detection (when two entities occupy the
-     * same space, for instance when your character should die), you may find
-     * the need to add an additional function call here. For now, we've left
-     * it commented out - you may or may not want to implement this
-     * functionality this way (you could just implement collision detection
-     * on the entities themselves within your app.js file).
-     */
+    /**
+    * This function is called by main (our game loop) and itself calls all
+    * of the functions which may need to update entity's data. Based on how
+    * you implement your collision detection (when two entities occupy the
+    * same space, for instance when your character should die), you may find
+    * the need to add an additional function call here. For now, we've left
+    * it commented out - you may or may not want to implement this
+    * functionality this way (you could just implement collision detection
+    * on the entities themselves within your app.js file).
+    */
     private update(dt) {
         this.updateEntities(dt);
         // checkCollisions();
     }
 
-    /* This is called by the update function and loops through all of the
-     * objects within your allEnemies array as defined in app.js and calls
-     * their update() methods. It will then call the update function for your
-     * player object. These update methods should focus purely on updating
-     * the data/properties related to the object. Do your drawing in your
-     * render methods.
-     */
+    /**
+    * This is called by the update function and loops through all of the
+    * objects within your allEnemies array as defined in app.js and calls
+    * their update() methods. It will then call the update function for your
+    * player object. These update methods should focus purely on updating
+    * the data/properties related to the object. Do your drawing in your
+    * render methods.
+    */
     private updateEntities(dt) {
         this.allEnemies.forEach(function (enemy: Enemy) {
             enemy.update(dt);
         });
         this.player.update(dt * 3);
     }
-
-    /* This function initially draws the "game level", it will then call
-     * the renderEntities function. Remember, this function is called every
-     * game tick (or loop of the game engine) because that's how games work -
-     * they are flipbooks creating the illusion of animation but in reality
-     * they are just drawing the entire screen over and over.
-     */
+    /**
+    * This function initially draws the "game level", it will then call
+    * the renderEntities function. Remember, this function is called every
+    * game tick (or loop of the game engine) because that's how games work -
+    * they are flipbooks creating the illusion of animation but in reality
+    * they are just drawing the entire screen over and over.
+    */
     private render() {
         /* This array holds the relative URL to the image used
          * for that particular row of the game level.
@@ -185,7 +220,7 @@ class Engine {
         this.renderEntities();
     }
 
-    /* This function is called by the render function and is called on each game
+    /** This function is called by the render function and is called on each game
      * tick. Its purpose is to then call the render functions you have defined
      * on your enemy and player entities within app.js
      */
@@ -200,7 +235,7 @@ class Engine {
         this.player.render();
     }
 
-    /* This function does nothing but it could have been a good place to
+    /** This function does nothing but it could have been a good place to
      * handle game reset states - maybe a new game menu or a game over screen
      * those sorts of things. It's only called once by the init() method.
      */

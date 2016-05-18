@@ -4,7 +4,7 @@
 class Player extends Sprite {
        
     /**
-     *
+     * The Player Class. Constructor needs game engine passed in
      */
     constructor(engine: Engine) {
         var config = {
@@ -29,7 +29,19 @@ class Player extends Sprite {
         this.engine.ctx.drawImage(this.engine.resources.get(this.spriteImage), this.x, this.y);
     };
     
-    public handleInput(input: string) {
+    public up() : void {
+        
+    }
+    
+    public down() : void {
+        
+    }
+    
+    public left() : void {
+        
+    }
+    
+    public right() : void {
         
     }
 }
