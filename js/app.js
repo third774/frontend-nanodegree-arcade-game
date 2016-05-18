@@ -114,6 +114,17 @@ var Resources = (function () {
     return Resources;
 }());
 /// <reference path="Resources.ts" />
+/* Engine.js
+ * This file provides the game loop functionality (update entities and render),
+ * draws the initial game board on the screen, and then calls the update and
+ * render methods on your player and enemy objects (defined in your app.js).
+ *
+ * A game engine works by drawing the entire game screen over and over, kind of
+ * like a flipbook you may have created as a kid. When your player moves across
+ * the screen, it may look like just that image/character is moving or being
+ * drawn but that is not the case. What's really happening is the entire "scene"
+ * is being drawn over and over, presenting the illusion of animation.
+ */
 var Engine = (function () {
     /**
      * The Game Engine
@@ -209,7 +220,8 @@ var Engine = (function () {
                 break;
         }
     };
-    /* This function does some initial setup that should only occur once,
+    /**
+     * This function does some initial setup that should only occur once,
      * particularly setting the lastTime variable that is required for the
      * game loop.
      */
@@ -221,6 +233,7 @@ var Engine = (function () {
         this.main();
         this.bindKeys();
     };
+    /** Returns an Array of Enemies */
     Engine.prototype.generateEnemies = function (numEnemies) {
         var allEnemies = [];
         for (var i = 0; i < numEnemies; i++) {
@@ -229,38 +242,41 @@ var Engine = (function () {
         }
         return allEnemies;
     };
-    /* This function is called by main (our game loop) and itself calls all
-     * of the functions which may need to update entity's data. Based on how
-     * you implement your collision detection (when two entities occupy the
-     * same space, for instance when your character should die), you may find
-     * the need to add an additional function call here. For now, we've left
-     * it commented out - you may or may not want to implement this
-     * functionality this way (you could just implement collision detection
-     * on the entities themselves within your app.js file).
-     */
+    /**
+    * This function is called by main (our game loop) and itself calls all
+    * of the functions which may need to update entity's data. Based on how
+    * you implement your collision detection (when two entities occupy the
+    * same space, for instance when your character should die), you may find
+    * the need to add an additional function call here. For now, we've left
+    * it commented out - you may or may not want to implement this
+    * functionality this way (you could just implement collision detection
+    * on the entities themselves within your app.js file).
+    */
     Engine.prototype.update = function (dt) {
         this.updateEntities(dt);
         // checkCollisions();
     };
-    /* This is called by the update function and loops through all of the
-     * objects within your allEnemies array as defined in app.js and calls
-     * their update() methods. It will then call the update function for your
-     * player object. These update methods should focus purely on updating
-     * the data/properties related to the object. Do your drawing in your
-     * render methods.
-     */
+    /**
+    * This is called by the update function and loops through all of the
+    * objects within your allEnemies array as defined in app.js and calls
+    * their update() methods. It will then call the update function for your
+    * player object. These update methods should focus purely on updating
+    * the data/properties related to the object. Do your drawing in your
+    * render methods.
+    */
     Engine.prototype.updateEntities = function (dt) {
         this.allEnemies.forEach(function (enemy) {
             enemy.update(dt);
         });
         this.player.update(dt * 3);
     };
-    /* This function initially draws the "game level", it will then call
-     * the renderEntities function. Remember, this function is called every
-     * game tick (or loop of the game engine) because that's how games work -
-     * they are flipbooks creating the illusion of animation but in reality
-     * they are just drawing the entire screen over and over.
-     */
+    /**
+    * This function initially draws the "game level", it will then call
+    * the renderEntities function. Remember, this function is called every
+    * game tick (or loop of the game engine) because that's how games work -
+    * they are flipbooks creating the illusion of animation but in reality
+    * they are just drawing the entire screen over and over.
+    */
     Engine.prototype.render = function () {
         /* This array holds the relative URL to the image used
          * for that particular row of the game level.
@@ -291,7 +307,7 @@ var Engine = (function () {
         }
         this.renderEntities();
     };
-    /* This function is called by the render function and is called on each game
+    /** This function is called by the render function and is called on each game
      * tick. Its purpose is to then call the render functions you have defined
      * on your enemy and player entities within app.js
      */
@@ -304,7 +320,7 @@ var Engine = (function () {
         });
         this.player.render();
     };
-    /* This function does nothing but it could have been a good place to
+    /** This function does nothing but it could have been a good place to
      * handle game reset states - maybe a new game menu or a game over screen
      * those sorts of things. It's only called once by the init() method.
      */
@@ -361,7 +377,7 @@ var Enemy = (function (_super) {
 var Player = (function (_super) {
     __extends(Player, _super);
     /**
-     *
+     * The Player Class. Constructor needs game engine passed in
      */
     function Player(engine) {
         var config = {
