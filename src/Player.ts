@@ -26,22 +26,30 @@ class Player extends Sprite {
     
     // Draw the player on the screen, required method for game
     public render() {
-        this.engine.ctx.drawImage(this.engine.resources.get(this.spriteImage), this.x, this.y);
+        this.engine.ctx.drawImage(this.engine.resources.get(this.spriteImage), this.col(this.x), this.row(this.y));
     };
     
     public up() : void {
-        
+        this.y--;
     }
     
     public down() : void {
-        
+        this.y++;
     }
     
     public left() : void {
-        
+        this.x--;
     }
     
     public right() : void {
-        
+        this.x++;
+    }
+
+    col(x: number): number {
+        return x * 101;
+    }
+
+    row(y: number): number {
+        return y * 83 - 40;
     }
 }

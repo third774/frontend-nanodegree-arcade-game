@@ -8,8 +8,8 @@ interface ISpriteConfig {
 class Sprite {
     engine: Engine;
     spriteImage: string;
-    x: any;
-    y: any;
+    x: number;
+    y: number;
 
     /**
      *

@@ -102,23 +102,20 @@ class Engine {
     private handleInput(input: string) {
         switch (input) {
             case 'up':
-                console.log('pressed up!');
-                this.player.up();
+                if (this.player.y > 0) this.player.up();
                 break;
             case 'down':
-                console.log('pressed down!');
-                this.player.down();
+                if (this.player.y < 5) this.player.down();
                 break;
             case 'left':
-                console.log('pressed left!');
-                this.player.left();
+                if (this.player.x > 0) this.player.left();
                 break;
             case 'right':
-                console.log('pressed right!');
-                this.player.right();
+                if (this.player.x < 4) this.player.right();
                 break;
             case 'space':
-                console.log('pressed space!');
+                console.log('space');
+
                 this.reset();
                 break;
             default:
@@ -131,14 +128,14 @@ class Engine {
      * game loop.
      */
     private init() {
-        this.reset();
         this.lastTime = Date.now();
         this.player = new Player(this);
+        this.reset();
         this.allEnemies = this.generateEnemies(4);
         this.main();
         this.bindKeys();
     }
-    
+
     /** Returns an Array of Enemies */
     private generateEnemies(numEnemies: number): Array<Enemy> {
         let allEnemies: Array<Enemy> = [];
@@ -160,7 +157,7 @@ class Engine {
     */
     private update(dt) {
         this.updateEntities(dt);
-        // checkCollisions();
+        this.checkCollisions();
     }
 
     /**
@@ -240,6 +237,21 @@ class Engine {
      * those sorts of things. It's only called once by the init() method.
      */
     private reset() {
-        // noop
+        this.player.x = 2;
+        this.player.y = 5;
+    }
+
+    private checkCollisions() {
+        if (this.player.y === 0) {
+            setTimeout(() => {
+                this.winTheGame();
+            }, 0);
+
+        }
+    }
+
+    private winTheGame(): void {
+        //alert('You win!');
+        this.reset();
     }
 }

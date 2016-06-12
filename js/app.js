@@ -197,23 +197,23 @@ var Engine = (function () {
     Engine.prototype.handleInput = function (input) {
         switch (input) {
             case 'up':
-                console.log('pressed up!');
-                this.player.up();
+                if (this.player.y > 0)
+                    this.player.up();
                 break;
             case 'down':
-                console.log('pressed down!');
-                this.player.down();
+                if (this.player.y < 5)
+                    this.player.down();
                 break;
             case 'left':
-                console.log('pressed left!');
-                this.player.left();
+                if (this.player.x > 0)
+                    this.player.left();
                 break;
             case 'right':
-                console.log('pressed right!');
-                this.player.right();
+                if (this.player.x < 4)
+                    this.player.right();
                 break;
             case 'space':
-                console.log('pressed space!');
+                console.log('space');
                 this.reset();
                 break;
             default:
@@ -226,9 +226,9 @@ var Engine = (function () {
      * game loop.
      */
     Engine.prototype.init = function () {
-        this.reset();
         this.lastTime = Date.now();
         this.player = new Player(this);
+        this.reset();
         this.allEnemies = this.generateEnemies(4);
         this.main();
         this.bindKeys();
@@ -254,7 +254,7 @@ var Engine = (function () {
     */
     Engine.prototype.update = function (dt) {
         this.updateEntities(dt);
-        // checkCollisions();
+        this.checkCollisions();
     };
     /**
     * This is called by the update function and loops through all of the
@@ -325,7 +325,20 @@ var Engine = (function () {
      * those sorts of things. It's only called once by the init() method.
      */
     Engine.prototype.reset = function () {
-        // noop
+        this.player.x = 2;
+        this.player.y = 5;
+    };
+    Engine.prototype.checkCollisions = function () {
+        var _this = this;
+        if (this.player.y === 0) {
+            setTimeout(function () {
+                _this.winTheGame();
+            }, 0);
+        }
+    };
+    Engine.prototype.winTheGame = function () {
+        //alert('You win!');
+        this.reset();
     };
     return Engine;
 }());
@@ -395,16 +408,26 @@ var Player = (function (_super) {
     };
     // Draw the player on the screen, required method for game
     Player.prototype.render = function () {
-        this.engine.ctx.drawImage(this.engine.resources.get(this.spriteImage), this.x, this.y);
+        this.engine.ctx.drawImage(this.engine.resources.get(this.spriteImage), this.col(this.x), this.row(this.y));
     };
     ;
     Player.prototype.up = function () {
+        this.y--;
     };
     Player.prototype.down = function () {
+        this.y++;
     };
     Player.prototype.left = function () {
+        this.x--;
     };
     Player.prototype.right = function () {
+        this.x++;
+    };
+    Player.prototype.col = function (x) {
+        return x * 101;
+    };
+    Player.prototype.row = function (y) {
+        return y * 83 - 40;
     };
     return Player;
 }(Sprite));
