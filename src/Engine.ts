@@ -130,7 +130,7 @@ class Engine {
     private init() {
         this.lastTime = Date.now();
         this.player = new Player(this);
-        this.reset();
+        //this.reset();
         this.allEnemies = this.generateEnemies(4);
         this.main();
         this.bindKeys();
@@ -237,8 +237,8 @@ class Engine {
      * those sorts of things. It's only called once by the init() method.
      */
     private reset() {
-        this.player.x = 2;
-        this.player.y = 5;
+        this.player = new Player(this);
+        this.allEnemies = this.generateEnemies(4);
     }
 
     private checkCollisions() {
@@ -246,12 +246,21 @@ class Engine {
             setTimeout(() => {
                 this.winTheGame();
             }, 0);
-
+        }
+        else {
+            this.allEnemies.forEach((enemy: Enemy) => {
+                if (this.player.x === enemy.x && this.player.y === enemy.y) {
+                    this.loseTheGame();
+                }
+            });
         }
     }
 
     private winTheGame(): void {
-        //alert('You win!');
+        this.reset();
+    }
+
+    private loseTheGame(): void {
         this.reset();
     }
 }

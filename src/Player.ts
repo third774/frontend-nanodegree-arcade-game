@@ -17,7 +17,9 @@ class Player extends Sprite {
         // Call the Sprite constructor passing in config
         super(config);
 
-        // Do more stuff here?        
+        // Do more stuff here?
+        this.x = 2;
+        this.y = 5;        
     }
 
     update(dt?: any): void {
@@ -25,9 +27,9 @@ class Player extends Sprite {
     }
     
     // Draw the player on the screen, required method for game
-    public render() {
-        this.engine.ctx.drawImage(this.engine.resources.get(this.spriteImage), this.col(this.x), this.row(this.y));
-    };
+    // public render() {
+    //     this.engine.ctx.drawImage(this.engine.resources.get(this.spriteImage), this.col(this.x), this.row(this.y));
+    // };
     
     public up() : void {
         this.y--;
@@ -43,13 +45,5 @@ class Player extends Sprite {
     
     public right() : void {
         this.x++;
-    }
-
-    col(x: number): number {
-        return x * 101;
-    }
-
-    row(y: number): number {
-        return y * 83 - 40;
     }
 }

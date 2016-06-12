@@ -20,6 +20,15 @@ class Sprite {
     }
 
     render(): void {
-        this.engine.ctx.drawImage(this.engine.resources.get(this.spriteImage), this.x, this.y);
+        this.engine.ctx.drawImage(this.engine.resources.get(this.spriteImage), this.col(this.x), this.row(this.y));
     };
+
+    col(x: number): number {
+        return x * 101;
+    }
+
+    row(y: number): number {
+        return y * 83 - 40;
+    }    
 }
+

@@ -228,7 +228,7 @@ var Engine = (function () {
     Engine.prototype.init = function () {
         this.lastTime = Date.now();
         this.player = new Player(this);
-        this.reset();
+        //this.reset();
         this.allEnemies = this.generateEnemies(4);
         this.main();
         this.bindKeys();
@@ -325,8 +325,8 @@ var Engine = (function () {
      * those sorts of things. It's only called once by the init() method.
      */
     Engine.prototype.reset = function () {
-        this.player.x = 2;
-        this.player.y = 5;
+        this.player = new Player(this);
+        this.allEnemies = this.generateEnemies(4);
     };
     Engine.prototype.checkCollisions = function () {
         var _this = this;
@@ -335,9 +335,18 @@ var Engine = (function () {
                 _this.winTheGame();
             }, 0);
         }
+        else {
+            this.allEnemies.forEach(function (enemy) {
+                if (_this.player.x === enemy.x && _this.player.y === enemy.y) {
+                    _this.loseTheGame();
+                }
+            });
+        }
     };
     Engine.prototype.winTheGame = function () {
-        //alert('You win!');
+        this.reset();
+    };
+    Engine.prototype.loseTheGame = function () {
         this.reset();
     };
     return Engine;
@@ -352,12 +361,23 @@ var Sprite = (function () {
         this.spriteImage = config.spriteImage;
     }
     Sprite.prototype.render = function () {
-        this.engine.ctx.drawImage(this.engine.resources.get(this.spriteImage), this.x, this.y);
+        this.engine.ctx.drawImage(this.engine.resources.get(this.spriteImage), this.col(this.x), this.row(this.y));
     };
     ;
+    Sprite.prototype.col = function (x) {
+        return x * 101;
+    };
+    Sprite.prototype.row = function (y) {
+        return y * 83 - 40;
+    };
     return Sprite;
 }());
 /// <reference path="./Sprite.ts" />
+var EnemyTypeEnum;
+(function (EnemyTypeEnum) {
+    EnemyTypeEnum[EnemyTypeEnum["left"] = 0] = "left";
+    EnemyTypeEnum[EnemyTypeEnum["right"] = 1] = "right";
+})(EnemyTypeEnum || (EnemyTypeEnum = {}));
 // Enemies our player must avoid
 var Enemy = (function (_super) {
     __extends(Enemy, _super);
@@ -365,6 +385,7 @@ var Enemy = (function (_super) {
      * Comment goes here
      */
     function Enemy(engine) {
+        var _this = this;
         var config = {
             engine: engine,
             // The image/sprite for our enemies, this uses
@@ -373,16 +394,27 @@ var Enemy = (function (_super) {
         };
         // Call the Sprite constructor passing in config
         _super.call(this, config);
-        // Do more stuff here?        
+        // Do more stuff here?
+        this.upperBoundary = 1;
+        this.lowerBoundary = 3;
+        this.y = Math.floor(Math.random() * (this.lowerBoundary - this.upperBoundary + 1)) + this.upperBoundary;
+        this.type = Math.random() > 0.5 ? EnemyTypeEnum.left : EnemyTypeEnum.right;
+        this.x = this.type == EnemyTypeEnum.left ? 0 : 4;
+        setInterval(function () {
+            _this.move();
+        }, 1000);
     }
     Enemy.prototype.update = function (dt) {
-        // do stuff
+        //console.log(dt);
     };
-    // Draw the enemy on the screen, required method for game
-    Enemy.prototype.render = function () {
-        this.engine.ctx.drawImage(this.engine.resources.get(this.spriteImage), this.x, this.y);
+    Enemy.prototype.move = function () {
+        if (this.type === EnemyTypeEnum.left) {
+            this.x++;
+        }
+        else {
+            this.x--;
+        }
     };
-    ;
     return Enemy;
 }(Sprite));
 /// <reference path="./Sprite.ts" />
@@ -401,16 +433,17 @@ var Player = (function (_super) {
         };
         // Call the Sprite constructor passing in config
         _super.call(this, config);
-        // Do more stuff here?        
+        // Do more stuff here?
+        this.x = 2;
+        this.y = 5;
     }
     Player.prototype.update = function (dt) {
         // do stuff
     };
     // Draw the player on the screen, required method for game
-    Player.prototype.render = function () {
-        this.engine.ctx.drawImage(this.engine.resources.get(this.spriteImage), this.col(this.x), this.row(this.y));
-    };
-    ;
+    // public render() {
+    //     this.engine.ctx.drawImage(this.engine.resources.get(this.spriteImage), this.col(this.x), this.row(this.y));
+    // };
     Player.prototype.up = function () {
         this.y--;
     };
@@ -422,12 +455,6 @@ var Player = (function (_super) {
     };
     Player.prototype.right = function () {
         this.x++;
-    };
-    Player.prototype.col = function (x) {
-        return x * 101;
-    };
-    Player.prototype.row = function (y) {
-        return y * 83 - 40;
     };
     return Player;
 }(Sprite));
